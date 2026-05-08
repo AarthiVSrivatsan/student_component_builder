@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: student-component-builder
+    env: python
+    plan: free
+    buildCommand: ""
+    startCommand: python3 student_component_builder.py --host 0.0.0.0 --port $PORT
