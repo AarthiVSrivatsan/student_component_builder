@@ -22,28 +22,48 @@ HTML_PAGE = """<!doctype html>
   <style>
     :root {
       color-scheme: light dark;
-      --bg: #f7f8fb;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #4b5563;
-      --border: #e5e7eb;
+      --bg1: #0ea5e9;
+      --bg2: #8b5cf6;
+      --bg3: #22c55e;
+      --bg: #0b1220;
+      --card: rgba(255,255,255,0.86);
+      --card2: rgba(255,255,255,0.70);
+      --text: #0b1220;
+      --muted: #334155;
+      --border: rgba(2, 8, 23, 0.14);
       --accent: #2563eb;
+      --accent2: #7c3aed;
+      --accent3: #06b6d4;
+      --shadow: 0 14px 40px rgba(2, 8, 23, 0.16);
+      --ring: 0 0 0 4px rgba(99, 102, 241, 0.18);
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #0f1115;
-        --card: #161a22;
-        --text: #f3f4f6;
-        --muted: #d1d5db;
-        --border: #2a3240;
+        --bg1: #111827;
+        --bg2: #0b1220;
+        --bg3: #1f2937;
+        --bg: #0b1220;
+        --card: rgba(17, 24, 39, 0.74);
+        --card2: rgba(17, 24, 39, 0.56);
+        --text: #f8fafc;
+        --muted: #cbd5e1;
+        --border: rgba(148, 163, 184, 0.18);
         --accent: #60a5fa;
+        --accent2: #c084fc;
+        --accent3: #22d3ee;
+        --shadow: 0 16px 46px rgba(0, 0, 0, 0.38);
+        --ring: 0 0 0 4px rgba(96, 165, 250, 0.18);
       }
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
-      background: var(--bg);
+      background:
+        radial-gradient(1200px 700px at 10% 10%, color-mix(in oklab, var(--bg1), transparent 55%), transparent),
+        radial-gradient(900px 600px at 90% 20%, color-mix(in oklab, var(--bg2), transparent 55%), transparent),
+        radial-gradient(900px 700px at 50% 100%, color-mix(in oklab, var(--bg3), transparent 65%), transparent),
+        linear-gradient(135deg, color-mix(in oklab, var(--bg2), #000 35%), color-mix(in oklab, var(--bg1), #000 45%));
       color: var(--text);
     }
     .wrap {
@@ -54,9 +74,11 @@ HTML_PAGE = """<!doctype html>
       padding: 14px;
     }
     .panel {
-      background: var(--card);
+      background: linear-gradient(180deg, var(--card), var(--card2));
       border: 1px solid var(--border);
       border-radius: 10px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
       display: flex;
       flex-direction: column;
       min-height: 0;
@@ -66,15 +88,6 @@ HTML_PAGE = """<!doctype html>
       padding: 14px 14px 10px;
       border-bottom: 1px solid var(--border);
       font-size: 18px;
-    }
-    .hint {
-      margin: 0;
-      padding: 10px 14px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.35;
-      border-bottom: 1px dashed var(--border);
-      white-space: pre-wrap;
     }
     textarea {
       flex: 1;
@@ -87,13 +100,21 @@ HTML_PAGE = """<!doctype html>
       font-size: 14px;
       line-height: 1.4;
       color: var(--text);
-      background: transparent;
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.00));
       outline: none;
+    }
+    textarea:focus {
+      box-shadow: var(--ring);
     }
     .diagram {
       flex: 1;
       overflow: auto;
       padding: 10px;
+      background:
+        radial-gradient(900px 340px at 20% 0%, rgba(99, 102, 241, 0.14), transparent 55%),
+        radial-gradient(760px 320px at 80% 0%, rgba(34, 211, 238, 0.12), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0));
+      border-top: 1px solid var(--border);
     }
     .diagram.hidden {
       display: none;
@@ -105,9 +126,10 @@ HTML_PAGE = """<!doctype html>
       flex-wrap: wrap;
     }
     .view-toggle button.active {
-      border-color: var(--accent);
-      color: var(--accent);
+      border-color: transparent;
+      color: #ffffff;
       font-weight: 600;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
     }
     .view-toggle .spacer {
       flex: 1 1 auto;
@@ -125,15 +147,22 @@ HTML_PAGE = """<!doctype html>
     button {
       border: 1px solid var(--border);
       border-radius: 8px;
-      background: var(--card);
+      background: color-mix(in oklab, var(--card), transparent 10%);
       color: var(--text);
       padding: 7px 10px;
       cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease, border-color 120ms ease;
+    }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(2, 8, 23, 0.12);
+      border-color: color-mix(in oklab, var(--accent3), var(--border) 60%);
     }
     button.primary {
-      border-color: var(--accent);
-      color: var(--accent);
+      border-color: transparent;
+      color: #ffffff;
       font-weight: 600;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
     }
     .error {
       color: #dc2626;
@@ -147,17 +176,6 @@ HTML_PAGE = """<!doctype html>
   <div class="wrap">
     <section class="panel">
       <h2>Write Components in English</h2>
-      <p class="hint">Use one block per class/component, separated by a blank line.
-Example:
-Class: Student
-Variables: name: string, rollNo: int
-Methods: enroll(course), drop(course)
-Uses: CourseService, Database
-Calls: Student.enroll -> CourseService.getCourse, Student.enroll -> Database.save
-
-Class: CourseService
-Variables: courses: list
-Methods: addCourse(course), getCourse(id)</p>
       <textarea id="source"></textarea>
       <div class="actions">
         <button class="primary" id="render">Render Diagram</button>
@@ -174,6 +192,7 @@ Methods: addCourse(course), getCourse(id)</p>
         <button id="orderViewBtn">Block / Ordered Flow</button>
         <span class="spacer"></span>
         <button class="mini" id="connectModeBtn" title="Click two components to connect them">Connect: Off</button>
+        <button class="mini" id="cardinalityBtn" title="Toggle 1..* multiplicity">Cardinality: 1</button>
         <button class="mini" id="orderModeBtn" title="Click components in order to create a flow">Order: Off</button>
         <button class="mini" id="orderUndoBtn" title="Remove last step">Undo</button>
         <button class="mini" id="orderClearBtn" title="Clear order">Clear</button>
@@ -187,25 +206,12 @@ Methods: addCourse(course), getCourse(id)</p>
   <script type="module">
     import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
 
-    const seedText = `Class: Student
-Variables: name: string, rollNo: int
-Methods: enroll(course), drop(course), viewGrades()
-Uses: CourseService, GradeService
-Calls: Student.enroll -> CourseService.getCourse, Student.viewGrades -> GradeService.getGrades
+    const seedText = `Team
+Employee
+Leave
+Person
 
-Class: CourseService
-Variables: courses: list
-Methods: addCourse(course), getCourse(id)
-Uses: Database
-
-Class: GradeService
-Variables: gradeBook: map
-Methods: assignGrade(student, subject, score), getGrades(studentId)
-Uses: Database
-
-Class: Database
-Variables: connectionString: string
-Methods: save(record), query(criteria)`;
+Employee inherits Person`;
 
     const source = document.getElementById("source");
     const archOutput = document.getElementById("archDiagram");
@@ -218,12 +224,14 @@ Methods: save(record), query(criteria)`;
     const flowViewBtn = document.getElementById("flowViewBtn");
     const orderViewBtn = document.getElementById("orderViewBtn");
     const connectModeBtn = document.getElementById("connectModeBtn");
+    const cardinalityBtn = document.getElementById("cardinalityBtn");
     const orderModeBtn = document.getElementById("orderModeBtn");
     const orderUndoBtn = document.getElementById("orderUndoBtn");
     const orderClearBtn = document.getElementById("orderClearBtn");
 
     let connectMode = false;
     let connectFrom = null;
+    let connectMany = false; // when true, record 1..* from source to target
     let lastArchIdToName = new Map();
     let orderMode = false;
     let orderSteps = [];
@@ -264,6 +272,10 @@ Methods: save(record), query(criteria)`;
       return classMatch ? classMatch[1].trim() : (sentenceMatch ? sentenceMatch[1].trim() : first);
     }
 
+    function looksLikeDetailedSpec(input) {
+      return /(^|\\n)\\s*(Class|Component|Variables?|Methods?|Uses|Depends\\s+on|Calls?|Flow|Inherits|Extends)\\s*:/i.test(input);
+    }
+
     function parseEnglish(input) {
       const blocks = input
         .split(/\\n\\s*\\n/g)
@@ -272,6 +284,68 @@ Methods: save(record), query(criteria)`;
 
       const components = [];
       const byName = new Map();
+
+      function ensureComponent(name) {
+        const cleaned = (name || "").trim();
+        if (!cleaned) return null;
+        const key = cleaned.toLowerCase();
+        if (byName.has(key)) return byName.get(key);
+        const comp = { name: cleaned, variables: [], methods: [], uses: [], calls: [], inherits: [] };
+        components.push(comp);
+        byName.set(key, comp);
+        return comp;
+      }
+
+      // Simple mode: newline-separated entity names, plus relationship lines:
+      //   Employee inherits Person
+      //   Employee extends Person
+      //   Employee -->|inherits| Person
+      if (!looksLikeDetailedSpec(input)) {
+        const lines = input
+          .split(/\\r?\\n/)
+          .map((l) => l.trim())
+          .filter(Boolean);
+
+        const inheritanceEdges = [];
+        const entityLines = [];
+
+        for (const rawLine of lines) {
+          // Allow optional bullets/prefixes like "-", "*", "•"
+          const line = rawLine.replace(/^[-*•]+\\s*/, "").trim();
+
+          const m1 = line.match(/^(.+?)\\s+(inherits|extends)\\s+(.+?)$/i);
+          const m2 = line.match(/^(.+?)\\s*--?>\\s*\\|\\s*inherits\\s*\\|\\s*(.+?)$/i);
+          if (m1) {
+            inheritanceEdges.push({ child: m1[1].trim(), parent: m1[3].trim() });
+            continue;
+          }
+          if (m2) {
+            inheritanceEdges.push({ child: m2[1].trim(), parent: m2[2].trim() });
+            continue;
+          }
+
+          // If a line contains the relationship keyword but didn't match formats above,
+          // never treat it as a class box (avoid creating "Employee inherits Person" as a node).
+          if (/(^|\\s)(inherits|extends)(\\s|$)/i.test(line)) {
+            continue;
+          }
+
+          entityLines.push(line);
+        }
+
+        for (const name of entityLines) ensureComponent(name);
+
+        for (const edge of inheritanceEdges) {
+          const child = ensureComponent(edge.child);
+          const parent = ensureComponent(edge.parent);
+          if (!child || !parent) continue;
+          if (!child.inherits.some((p) => p.toLowerCase() === parent.name.toLowerCase())) {
+            child.inherits.push(parent.name);
+          }
+        }
+
+        return components;
+      }
 
       for (const block of blocks) {
         const lines = block
@@ -285,12 +359,13 @@ Methods: save(record), query(criteria)`;
         const sentenceMatch = first.match(/^class\\s+([a-zA-Z_][\\w]*)\\b/i);
         const name = classMatch ? classMatch[1].trim() : (sentenceMatch ? sentenceMatch[1].trim() : first);
 
-        const comp = { name, variables: [], methods: [], uses: [], calls: [] };
+        const comp = { name, variables: [], methods: [], uses: [], calls: [], inherits: [] };
         for (const line of lines.slice(1)) {
           const variableMatch = line.match(/^variables?\\s*:\\s*(.+)$/i);
           const methodMatch = line.match(/^methods?\\s*:\\s*(.+)$/i);
           const usesMatch = line.match(/^(?:uses|depends\\s+on)\\s*:\\s*(.+)$/i);
           const methodFlowMatch = line.match(/^(?:method\\s+)?(?:flow|calls?)\\s*:\\s*(.+)$/i);
+          const inheritsMatch = line.match(/^(?:inherits|extends)\\s*:\\s*(.+)$/i);
 
           if (variableMatch) comp.variables.push(...parseList(variableMatch[1]));
           else if (methodMatch) comp.methods.push(...parseList(methodMatch[1]));
@@ -301,11 +376,32 @@ Methods: save(record), query(criteria)`;
               if (edge) comp.calls.push(edge);
             }
           }
+          else if (inheritsMatch) comp.inherits.push(...parseList(inheritsMatch[1]));
         }
 
         components.push(comp);
         byName.set(comp.name.toLowerCase(), comp);
       }
+
+      // Detailed mode can also include standalone inheritance lines anywhere.
+      const inheritEdges = [];
+      for (const line of input.split(/\\r?\\n/)) {
+        const m1 = line.match(/^\\s*(.+?)\\s*--?>\\s*\\|\\s*inherits\\s*\\|\\s*(.+?)\\s*$/i);
+        const m2 = line.match(/^\\s*(.+?)\\s+(inherits|extends)\\s+(.+?)\\s*$/i);
+        const m = m1 || m2;
+        if (!m) continue;
+        if (m1) inheritEdges.push({ child: m1[1].trim(), parent: m1[2].trim() });
+        else inheritEdges.push({ child: m2[1].trim(), parent: m2[3].trim() });
+      }
+      for (const edge of inheritEdges) {
+        const child = ensureComponent(edge.child);
+        const parent = ensureComponent(edge.parent);
+        if (!child || !parent) continue;
+        if (!child.inherits.some((p) => p.toLowerCase() === parent.name.toLowerCase())) {
+          child.inherits.push(parent.name);
+        }
+      }
+
       return components;
     }
 
@@ -341,7 +437,13 @@ Methods: save(record), query(criteria)`;
       return `m_${normName(methodRef)}`;
     }
 
-    function addUsesInText(sourceText, fromComponent, toComponent) {
+    function normalizeUsesToken(raw) {
+      const m = raw.trim().match(/^(.+?)\\s*\\(([^)]+)\\)\\s*$/);
+      if (!m) return { name: raw.trim(), card: null };
+      return { name: m[1].trim(), card: m[2].trim() };
+    }
+
+    function addUsesInText(sourceText, fromComponent, toComponent, cardinalityLabel = null) {
       const blocks = sourceText.split(/\\n\\s*\\n/g);
       const updatedBlocks = [];
       let changed = false;
@@ -369,16 +471,26 @@ Methods: save(record), query(criteria)`;
           }
           foundUsesLine = true;
           const existing = parseList(m[2] || "");
-          const set = new Map(existing.map((x) => [x.toLowerCase(), x]));
-          if (!set.has(toComponent.toLowerCase())) {
-            existing.push(toComponent);
+
+          const desiredToken = cardinalityLabel ? `${toComponent} (${cardinalityLabel})` : toComponent;
+          const desiredKey = toComponent.toLowerCase();
+
+          const normalized = existing.map((t) => normalizeUsesToken(t));
+          const index = normalized.findIndex((t) => t.name.toLowerCase() === desiredKey);
+
+          if (index === -1) {
+            existing.push(desiredToken);
+            changed = true;
+          } else if (cardinalityLabel && normalized[index].card !== cardinalityLabel) {
+            existing[index] = desiredToken;
             changed = true;
           }
           outLines.push(`Uses: ${existing.join(", ")}`);
         }
 
         if (!foundUsesLine) {
-          outLines.push(`Uses: ${toComponent}`);
+          const token = cardinalityLabel ? `${toComponent} (${cardinalityLabel})` : toComponent;
+          outLines.push(`Uses: ${token}`);
           changed = true;
         }
 
@@ -403,14 +515,35 @@ Methods: save(record), query(criteria)`;
 
       for (const comp of components) {
         for (const dep of comp.uses) {
-          const depName = dep.trim();
+          const raw = dep.trim();
+          if (!raw) continue;
+
+          const parsed = normalizeUsesToken(raw);
+          const depName = parsed.name;
           if (!depName) continue;
           const depId = normName(depName);
+
           if (!existing.has(depName.toLowerCase()) && !emittedExternal.has(depName.toLowerCase())) {
             lines.push(`${depId}["${escapeLabel(depName)}"]`);
             emittedExternal.add(depName.toLowerCase());
           }
-          lines.push(`${normName(comp.name)} -->|uses| ${depId}`);
+
+          const label = parsed.card ? parsed.card : "uses";
+          lines.push(`${normName(comp.name)} -->|${escapeLabel(label)}| ${depId}`);
+        }
+      }
+
+      // Inheritance (Child inherits Parent)
+      for (const comp of components) {
+        for (const parent of comp.inherits || []) {
+          const parentName = (parent || "").trim();
+          if (!parentName) continue;
+          const parentId = normName(parentName);
+          if (!existing.has(parentName.toLowerCase()) && !emittedExternal.has(parentName.toLowerCase())) {
+            lines.push(`${parentId}["${escapeLabel(parentName)}"]`);
+            emittedExternal.add(parentName.toLowerCase());
+          }
+          lines.push(`${normName(comp.name)} -->|inherits| ${parentId}`);
         }
       }
       return lines.join("\\n");
@@ -612,7 +745,8 @@ Methods: save(record), query(criteria)`;
 
         if (name.toLowerCase() === connectFrom.toLowerCase()) return;
 
-        const updated = addUsesInText(source.value, connectFrom, name);
+        const card = connectMany ? "1..*" : null;
+        const updated = addUsesInText(source.value, connectFrom, name, card);
         source.value = updated;
         connectFrom = null;
         clearArchSelectionStyles();
@@ -746,6 +880,10 @@ Methods: save(record), query(criteria)`;
       setConnectMode(!connectMode);
       errorBox.textContent = connectMode ? "Connect mode: click a source component, then a target component." : "";
       renderDiagram();
+    });
+    cardinalityBtn.addEventListener("click", () => {
+      connectMany = !connectMany;
+      cardinalityBtn.textContent = `Cardinality: ${connectMany ? "1..*" : "1"}`;
     });
     orderModeBtn.addEventListener("click", () => {
       setView("order");
